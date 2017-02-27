@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>MeeBlip Web MIDI Patch Editors</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+    <style type="text/css">
+    
+    body {
+      background: #eee;
+      font-family: 'Open Sans', sans-serif;
+      margin-top: 2%;
+    }
+
+    .triode {
+      background: #f00;
+      border: 1px solid #333;
+    }
+
+    .anode {
+      background: #fff;
+      border: 1px solid #333; 
+    }
+
+    #meeblipb {
+      width: 200px;
+      /*
+      position: relative;
+      left: 40px;
+      top: 6px;
+      */
+      z-index: 100;
+    }
+
+    #anode {
+      width: 75px;
+      
+      position: relative;
+      left: -6px;
+      top: 0px;
+      
+      z-index: 0;
+    }
+
+    #meeblipw {
+      width: 200px;
+      /*
+      position: relative;
+      left: 0px;
+      top: 0px;
+      */
+      z-index: 100;
+    }
+
+    #triode {
+      width: 75px;
+      
+      position: relative;
+      left: -6px;
+      top: 0px;
+      
+      z-index: 0;
+    }
+    .logo {
+      
+    }
+
+    .container {
+      border: 1px solid #333;
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 32px;
+      padding-bottom: 32px;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    h3 {
+      margin: 32px 0 16px 16px;
+    }
+    
+    li {
+      z-index: 100;
+    }
+
+    li img {
+      z-index: 0;
+    }
+
+    </style>
+
+  </head>
+  <body>
+    
+    <div class="container vertical-align">
+      <div class="row">
+      <div class="col col-lg-12">
+        <div class="inner cover text-center">
+          <h1 class="cover-heading">MeeBlip Apps</h1>
+          <p class="lead">Create and share patches for Anode and Triode using Web MIDI editors for Chrome and Opera.</p>  
+        </div>
+      </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col col-lg-4">
+          <div class="logo">
+            <a href="./triode" class="btn btn-lg btn-default triode"><img id="meeblipw" src="./img/meeblip-transparent-white.png" /><img id="triode" src="./img/triode-transparent-white.png" /></a>
+          </div>
+        </div>
+        <div class="col col-lg-4">
+          <div class="logo">
+            <a href="./anode" class="btn btn-lg btn-default anode"><img id="meeblipb" src="./img/meeblip-transparent.png" /><img id="anode" src="./img/anode-transparent.png" /></a>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row">
+      <div class="col">
+        <h3>Quick Start Guide</h3>
+        <ol>
+          <li>Click one of the buttons above to open up the editor for your MeeBlip synth</li>
+          <li>Select the MIDI port and channel your MeeBlip is set up to use from the control bar: <img src="./img/quick-start/port-chan.png" width="160" /></li>
+          <li>Adjust knobs and switches - you can control MIDI-only params, too!  (Use the <img src="./img/quick-start/gen-rand.png" width="110" /> button to generate a random config or load up a sample patch from the patch browser via the <img src="./img/quick-start/patches.png" width="75" /> button)</li>
+          <li>Click the <img src="./img/quick-start/send.png" width="60" style="" /> button to transmit knob and switch values to your MeeBlip. (Make sure you have the port and channel settings correct!)</li>
+          <li>To save a patch, click the <img src="./img/quick-start/patch-link.png" width="95" /> button then click the <img src="./img/quick-start/link-for-patch-no-dialog.png" width="200" /> link in the dialog window to load the URL in your browser for bookmarking.</li>
+          <li>Don't have a keyboard or DAW handy?  No problem!  Click the <img src="./img/quick-start/sequencer.png" width="55" /> button to launch an 8-step sequencer and try out your sounds right from the editor.  (Tip: the sequencer can continue playing when its dialog is closed.  So you can load up new patches while the sequencer plays in the background.)</li>
+          <li>Share patch links on Twitter at <a href="https://twitter.com/MeeblipPatches">@MeeblipPatches</a>! Tag with <i>#meeblip</i> and a <i>#your-patch-name</i> tag to help other users find and try your patches.</li>
+          <li>Code is open source and available on <a href="https://github.com/MeeBlip/meeblip-web">GitHub</a>.</li>
+        </ol>
+      </div>
+      </div>    
+    </div>
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -1,0 +1,312 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>MeeBlip anode</title>
+  <meta name="description" content="MeeBlip anode Web MIDI Patch Editor">
+  <meta name="author" content="MeeBlip">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+  <link href="./s.css" rel="stylesheet">
+  <link href="../lib/jquery-ui.css" rel="stylesheet">
+
+  <script src="../lib/jquery-2.2.4.min.js" type="text/javascript"></script>
+  <script src="../lib/jquery.knob.min.js" type="text/javascript"></script>
+  <script src="../lib/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="../lib/jsrender.min.js" type="text/javascript"></script>
+  <script src="../lib/midiAccess.js" type="text/javascript"></script>
+  <script src="../lib/sequencer.js" type="text/javascript"></script>
+  <script src="./patches.js" type="text/javascript"></script>
+  <script src="../lib/editor.js" type="text/javascript"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../lib/DataTables/datatables.min.css"/>
+  <script type="text/javascript" src="../lib/DataTables/datatables.min.js"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+  
+  <div id="titleBar">
+  <img id="meeblip" src="../img/meeblip-transparent.png" /><img id="anode" src="../img/anode-transparent.png" />
+  </div>
+
+
+  <form id="editor" name="editor">
+  
+  <div id="controlBar"></div>
+
+
+  <div id="envelope" class="knobGroup">
+    <h2>envelope</h2>
+    <div class="knobLabelPair">
+      
+      <h3>amp decay</h3>
+      <input name="aDecay" type="text" class="dial" value="64" />
+      
+    </div>
+    <div class="knobLabelPair">
+      
+      <h3>filter decay</h3>
+      <input name="fDecay" type="text" class="dial" value="64" />
+      
+    </div>
+
+    <div id="sustain" class="knobLabelPair switch">
+      <h3>sustain</h3>
+      <input type="radio" id="sustain1" name="sustain" value="0"><label for="sustain1">off</label>
+      <input type="radio" id="sustain2" name="sustain" checked="checked" value="127"><label for="sustain2">on</label>
+    </div>
+  </div>
+
+  <div id="filter" class="knobGroup groupRight">
+    <h2>filter</h2>
+    <div class="knobLabelPair">
+    
+      <h3>cutoff</h3>
+      <input name="fCut" type="text" class="dial" value="64" />
+      
+    </div>
+  </div>
+
+  <div class="clear">&nbsp;</div>
+
+  <div id="oscillators" class="knobGroup">
+    <h2>oscillators</h2>
+    <div class="knobLabelPair">
+      
+      <h3>wave</h3>
+      <input name="wave" class="dial" type="text" value="0" />
+      
+      <table id="waveBanks">
+        <tbody id="waveBanksBody">
+        <tr>
+          <td><b>range</b></td>
+          <td><b>bank a</b></td>
+          <td><b>bank b</b></td>
+        </tr>
+        </tbody>
+      </table>
+      <script id="waveBanksTmpl" type="text/x-jsrender">
+        <tr>
+          <td>{{:range}}</td>
+          <td>{{:bankA}}</td>
+          <td>{{:bankB}}</td>
+        </tr>
+      </script>
+      <script type="text/javascript">
+        var waves = 
+          [{"range": "0-15", "bankA": "pwm", "bankB": "bit 1"},
+          {"range": "16-31", "bankA": "pulse", "bankB": "bit 2"},
+          {"range": "32-47", "bankA": "saw", "bankB": "bit 3"},
+          {"range": "48-63", "bankA": "fm 1 ", "bankB": "dist 2"},
+          {"range": "64-79", "bankA": "dist 1", "bankB": "dist 3"},
+          {"range": "80-95", "bankA": "gran 1", "bankB": "fm 2"},
+          {"range": "96-111", "bankA": "voice 1", "bankB": "fm 3"},
+          {"range": "112-127", "bankA": "voice 2", "bankB": "+ gran"}];
+        var html = $.templates("#waveBanksTmpl").render(waves);
+        $("#waveBanksBody").append(html);
+      </script>
+
+    </div>
+
+    <div class="knobLabelPair">
+      <h3>detune</h3>
+      <input name="detune" type="text" class="dial" value="64" />
+    </div>
+
+    <div style="float:left">
+    <div id="octave" class="knobLabelPairStacked switch">
+      <h3>octave</h3>
+      <input type="radio" id="octave1" name="octave" value="0" /><label for="octave1">down</label>
+      <input type="radio" id="octave2" name="octave" checked="checked" value="127" /><label for="octave2">up</label>
+    </div>
+
+    <div id="pwmSweep" class="knobLabelPairStacked switch">
+      <h3>wave bank</h3>
+      <input type="radio" id="pwmSweep1" name="pwmSweep" checked="checked" value="0" /><label for="pwmSweep1">a</label>
+      <input type="radio" id="pwmSweep2" name="pwmSweep" value="127" /><label for="pwmSweep2">b</label>
+    </div>
+    </div>
+    
+  </div>
+
+  <div id="lfo" class="knobGroup groupRight">
+    <h2>lfo</h2>
+    <div class="knobLabelPair">
+      
+      <h3>rate</h3>
+      <input name="lRate" type="text" class="dial" value="64" />
+      
+    </div>
+
+    <div class="knobLabelPair">
+      <h3>depth</h3>
+      <input name="lDepth" type="text" class="dial" value="64" />
+    </div>
+
+    <div id="lDest" class="knobLabelPair switch">
+      <h3>dest</h3>
+      <input type="radio" id="lDest1" name="lDest" value="0" /><label for="lDest1">osc</label>
+      <input type="radio" id="lDest2" name="lDest" checked="checked" value="127" /><label for="lDest2">filter</label>
+    </div>
+  </div>
+
+  <div class="clear">&nbsp;</div>
+
+  <div id="midiOnly" class="knobGroup">
+    <h2>MIDI only</h2>
+
+    <div class="knobLabelPair">
+      <h3>glide</h3>
+      <input name="glide" type="text" class="dial" value="0" />
+    </div>
+
+    <div class="knobLabelPairWide">
+      <h3>vcf env amount</h3>
+      <input name="vcfEnvAmount" type="text" class="dial" value="100" />
+    </div>
+
+    <div id="lRand" class="knobLabelPair switch" style="margin-left:16px">
+      <h3>lfo random</h3>
+      <input type="radio" id="lRand1" name="lRand" checked="checked" value="0" /><label for="lRand1">off</label>
+      <input type="radio" id="lRand2" name="lRand" value="127" /><label for="lRand2">on</label>
+    </div>
+
+    <div id="lNoteRetrig" class="knobLabelPairWide switch">
+      <h3>lfo note retrigger</h3>
+      <input type="radio" id="lNoteRetrig1" name="lNoteRetrig" value="0" /><label for="lNoteRetrig1">off</label>
+      <input type="radio" id="lNoteRetrig2" name="lNoteRetrig" checked="checked" value="127" /><label for="lNoteRetrig2">on</label>
+    </div>
+
+    <div id="oscBWave" class="knobLabelPairWide switch">
+      <h3>osc b wave</h3>
+      <input type="radio" id="oscBWave1" name="oscBWave" checked="checked" value="0" /><label for="oscBWave1">pulse</label>
+      <input type="radio" id="oscBWave2" name="oscBWave" value="127" /><label for="oscBWave2">saw</label>
+    </div>
+
+    <div class="clear">&nbsp;</div>
+
+    <div class="knobGroup">
+      <div class="knobLabelPairTopRel">
+        <h3>amp attack</h3>
+        <input name="aAttck" type="text" class="dial" value="0" />
+      </div>
+
+      <div class="knobLabelPairTopRel">
+        <h3>filter attack</h3>
+        <input name="fAttck" type="text" class="dial" value="0" />
+      </div>
+    </div>
+
+    </div>
+  
+  </form>
+  
+<script type="text/javascript">
+
+var formToCCs = {
+  "aDecay": 54,
+  "fDecay": 53,
+  "sustain": 64,
+  "fCut": 52,
+  "wave": 51,
+  "detune": 50,
+  "octave": 65,
+  "lDepth": 48,
+  "lRate": 49,
+  "lDest": 67,
+  "pwmSweep": 66,
+  "glide": 55,
+  "vcfEnvAmount": 56,
+  "aAttck": 57,
+  "fAttck": 58,
+  "lRand": 68,
+  "lNoteRetrig": 69,
+  "oscBWave": 70
+};
+
+$(function() {
+
+  editor.loadControlBar("#controlBar", [1,2,3,4]);
+  editor.initKnobs();
+  editor.initSwitches();
+
+  $("#oscBWave").buttonset(); // anode only
+  
+  $("#send").button().click(
+    function(event) {
+      //console.log(event);
+
+      if (!midi.isSelectedPortValid()) {
+        return false;
+      }
+
+      var f = document.forms["editor"];
+      var status = 176 + midi.selectedChannel();
+      var midiOut = midi.getOutputPort();
+      console.log("MIDI out port: " + midiOut.name);
+
+      for (var i = 0; i < f.elements.length; i++) {
+          var e = f.elements[i];
+          if (formToCCs[e.name] === undefined) {
+            continue;
+          }
+          if (e.type == "radio") {
+            if (!e.checked) { // skip unchecked radio button options
+              continue;
+            }
+          }
+          var ccNum = formToCCs[e.name];
+          var val = e.value;
+          console.log(e.name + ": [" + status + ", " + ccNum + ", " + val + "]");
+
+          midiOut.send([status, ccNum, val]);
+      }
+
+      return false;
+    }
+  );
+
+  $("#surprise").button().click(
+      function(event) {
+          var f = document.forms["editor"];
+          for (var param in formToCCs) {
+              var rand = Math.floor((Math.random() * 128));
+              var e = f.elements[param];
+              console.log(param + "=" + rand);                    
+              if (e.length > 1) { // undefined for scalar form inputs
+                for (var j = 0; j < e.length; j++) {
+                  var radioInput = e[j];
+                  if (rand < 64) {
+                    if (editor.updateSwitch(radioInput, param, 0)) {
+                      break; // save 1 iteration when rand is for off position since "0" radio button is always first in the list
+                    }
+                  } else {
+                    if (editor.updateSwitch(radioInput, param, 127)) {
+                      break;
+                    }
+                  }
+                }
+              } else {
+                e.value = rand;
+                $("input[name='" + param + "']").trigger("change");
+              }
+
+          }
+          return false;
+      }
+  );
+
+});
+
+</script>
+  
+<div class="clear" style="padding:1px;">&nbsp;</div>
+</div> <!-- close container -->
+
+</body>
+</html>

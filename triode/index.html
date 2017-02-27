@@ -1,0 +1,344 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>MeeBlip triode</title>
+  <meta name="description" content="MeeBlip triode Web MIDI Patch Editor">
+  <meta name="author" content="MeeBlip">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+  <link href="./s.css" rel="stylesheet">
+  <link href="../lib/jquery-ui.css" rel="stylesheet">
+  
+  <script src="../lib/jquery-2.2.4.min.js" type="text/javascript"></script>
+  <script src="../lib/jquery.knob.min.js" type="text/javascript"></script>
+  <script src="../lib/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="../lib/jsrender.min.js" type="text/javascript"></script>
+  <script src="../lib/midiAccess.js" type="text/javascript"></script>
+  <script src="../lib/sequencer.js" type="text/javascript"></script>
+  <script src="./patches.js" type="text/javascript"></script>
+  <script src="../lib/editor.js" type="text/javascript"></script>
+  
+  <link rel="stylesheet" type="text/css" href="../lib/DataTables/datatables.min.css"/>
+  <script type="text/javascript" src="../lib/DataTables/datatables.min.js"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+  
+  <div id="titleBar">
+  <img id="meeblip" src="../img/meeblip-transparent-offwhite.png" /><img id="triode" src="../img/triode-transparent-offwhite.png" />
+  </div>
+
+
+  <form id="editor" name="editor">
+  
+  <div id="controlBar"></div>  
+
+
+  <div id="envelope" class="knobGroup">
+    <h2>envelope</h2>
+    <div class="knobLabelPair">
+      
+      <h3>amp decay</h3>
+      <input name="aDecay" type="text" class="dial" value="64" />
+      
+    </div>
+    <div class="knobLabelPair">
+      
+      <h3>filter decay</h3>
+      <input name="fDecay" type="text" class="dial" value="64" />
+      
+    </div>
+
+    <div id="sustain" class="knobLabelPair switch">
+      <h3>sustain</h3>
+      <input type="radio" id="sustain1" name="sustain" value="0"><label for="sustain1">off</label>
+      <input type="radio" id="sustain2" name="sustain" checked="checked" value="127"><label for="sustain2">on</label>
+    </div>
+  </div>
+
+  <div id="filter" class="knobGroup groupRight">
+    <h2>filter</h2>
+    <div class="knobLabelPair">
+      <h3>cutoff</h3>
+      <input name="fCut" type="text" class="dial" value="64" />
+    </div>
+    <div class="knobLabelPair">
+      <h3>resonance</h3>
+      <input name="fRes" type="text" class="dial" value="64" />
+    </div>
+  </div>
+
+  <div class="clear">&nbsp;</div>
+
+  <div id="oscillators" class="knobGroup">
+    <h2>oscillators</h2>
+    <div class="knobLabelPair">
+      
+      <h3>glide/wave</h3>
+      <input name="wave" class="dial" type="text" value="0" />
+      
+      <table id="waveBanks">
+        <tbody id="waveBanksBody">
+        </tbody>
+      </table>
+      <script id="waveBanksTmpl" type="text/x-jsrender">
+        {{for rows}}
+        <tr>
+          {{for}}
+            <td>{{:#data}}</td>
+          {{/for}}
+        </tr>
+        {{/for}}
+      </script>
+      <script type="text/javascript">
+        var waves = [
+          ["<b>range</b>", "0-15", "16-31", "32-47", "48-63", "64-79", "80-95", "96-111", "112-127"],
+          ["<b>bank a</b>", "pwm", "pulse", "saw", "fm 1 ", "dist 1", "gran 1", "voice 1", "voice 2"],
+          ["<b>bank b</b>", "bit 1", "bit 2", "bit 3", "dist 2", "dist 3", "fm 2", "fm 3", "+ gran"],
+          ["<b>bank c</b>", "chip 1", "chip 1", "game 1", "game 2", "bit 4", "bit 5", "raw 1", "raw 2"]
+        ];
+
+        var html = $.templates("#waveBanksTmpl").render({rows: waves});
+        $("#waveBanksBody").append(html);
+      </script>
+
+    </div>
+
+    <div class="knobLabelPair">
+      <h3>detune</h3>
+      <input name="detune" type="text" class="dial" value="64" />
+    </div>
+
+    <div style="float:left">
+    <div id="octave" class="knobLabelPairStacked switch">
+      <h3>sub osc</h3>
+      <input type="radio" id="octave1" name="octave" value="0" /><label for="octave1">off</label>
+      <input type="radio" id="octave2" name="octave" checked="checked" value="127" /><label for="octave2">on</label>
+    </div>
+
+    <div id="pwmSweep" class="knobLabelPairStacked switch" style="width: 145px">
+      <h3>waveform/bank</h3>
+      <input type="radio" id="pwmSweep1" name="pwmSweep" checked="checked" value="127" /><label for="pwmSweep1">sq</label>
+      <input type="radio" id="pwmSweep2" name="pwmSweep" value="64" /><label for="pwmSweep2">pwm</label>
+      <input type="radio" id="pwmSweep3" name="pwmSweep" value="0" /><label for="pwmSweep3">saw</label>
+    </div>
+    </div>
+    
+  </div>
+
+  <div id="lfo" class="knobGroup groupRight">
+    <h2>lfo</h2>
+    <div class="knobLabelPair">
+      
+      <h3>rate</h3>
+      <input name="lRate" type="text" class="dial" value="64" />
+      
+    </div>
+
+    <div class="knobLabelPair">
+      <h3>depth</h3>
+      <input name="lDepth" type="text" class="dial" value="64" />
+    </div>
+
+    <div id="lDest" class="knobLabelPair switch">
+      <h3>dest</h3>
+      <input type="radio" id="lDest1" name="lDest" value="0" /><label for="lDest1">osc</label>
+      <input type="radio" id="lDest2" name="lDest" checked="checked" value="127" /><label for="lDest2">filter</label>
+    </div>
+  </div>
+
+  <div class="clear">&nbsp;</div>
+
+  <div id="midiOnly" class="knobGroup">
+    <h2>MIDI only</h2>
+
+    <div class="knobLabelPairWide">
+      <h3>glide (bank mode)</h3>
+      <input name="glide" type="text" class="dial" value="0" />
+    </div>
+
+    <div class="knobLabelPair">
+      <h3>filter accent</h3>
+      <input name="fAccnt" type="text" class="dial" value="0" />
+    </div>
+
+    <div class="knobLabelPair">
+      <h3>filter env mod</h3>
+      <input name="vcfEnvAmount" type="text" class="dial" value="100" />
+    </div>
+
+    <div id="lRand" class="knobLabelPair switch" style="margin-left: 16px">
+      <h3>lfo random</h3>
+      <input type="radio" id="lRand1" name="lRand" checked="checked" value="0" /><label for="lRand1">off</label>
+      <input type="radio" id="lRand2" name="lRand" value="127" /><label for="lRand2">on</label>
+    </div>
+
+    <div id="lNoteRetrig" class="knobLabelPairWide switch">
+      <h3>lfo note retrigger</h3>
+      <input type="radio" id="lNoteRetrig1" name="lNoteRetrig" value="0" /><label for="lNoteRetrig1">off</label>
+      <input type="radio" id="lNoteRetrig2" name="lNoteRetrig" checked="checked" value="127" /><label for="lNoteRetrig2">on</label>
+    </div>
+
+      <div class="clear">&nbsp;</div>
+
+      <div class="knobGroup">
+      <div class="knobLabelPairTopRelWide">
+        <h3>osc pulse width</h3>
+        <input name="oscPW" type="text" class="dial" value="64" />
+      </div>
+
+      <div class="knobLabelPairTopRel">
+        <h3>amp attack</h3>
+        <input name="aAttck" type="text" class="dial" value="0" />
+      </div>
+
+      <div class="knobLabelPairTopRel">
+        <h3>filter attack</h3>
+        <input name="fAttck" type="text" class="dial" value="0" />
+      </div>
+      </div>
+    </div>
+
+  </form>
+  
+<script type="text/javascript">
+
+var formToCCs = {
+  "aDecay": 55,
+  "fDecay": 54,
+  "fRes": 52,
+  "sustain": 64,
+  "fCut": 53,
+  "wave": 51,
+  "detune": 50,
+  "octave": 65,
+  "lDepth": 48,
+  "lRate": 49,
+  "lDest": 67,
+  /*
+  triode uses a 3-way switch for osc b wave type and pwm.
+  a value of 0 or 127 gets mapped to CC 68 in the send button function.
+
+  there is probably a nicer way to handle this but just special casing in
+  the interest of getting something functional in place.
+  */
+  "pwmSweep": 66,
+  "glide": 61,
+  "fAccnt": 56,
+  "vcfEnvAmount": 57,
+  "aAttck": 60,
+  "fAttck": 59,
+  "lRand": 69,
+  "lNoteRetrig": 70,
+  "oscPW": 58
+};
+
+$(function() {
+
+  editor.loadControlBar("#controlBar", [1,2,3,4,5,6,7,8]);
+  editor.initKnobs();
+  editor.initSwitches();
+
+  $("#send").button().click(
+    function(event) {
+      //console.log(event);
+      if (!midi.isSelectedPortValid()) {
+        return false;
+      }
+
+      var f = document.forms["editor"];
+      var status = 176 + midi.selectedChannel();
+      var midiOut = midi.getOutputPort();
+      console.log("MIDI out: " + midiOut.name);
+      
+      for (var i = 0; i < f.elements.length; i++) {
+          var e = f.elements[i];
+          if (formToCCs[e.name] === undefined) {
+            continue;
+          }
+          if (e.type == "radio") {
+            if (!e.checked) { // skip unchecked radio button options
+              continue;
+            }
+          }
+          var ccNum = formToCCs[e.name];
+          var val = e.value;
+          // special case handling for 3-way switch on triode
+          if (e.name == "pwmSweep") {
+            if (val != 64) {
+              ccNum = 68; // sets osc b waveform between pulse and saw
+              console.log("3-way switch workaround, setting pwmSweep CC to " + ccNum + "for switch val " + val);
+              // if switching wave form to sq or saw explicitly set pwm to off
+              midiOut.send([status, 66, 0]);
+            } else {
+              val = 127; // 64 gets mapped to 127 to enable pwm switch
+              console.log("3-way switch workaround, pwmSweep on, adjusted val is " + val);
+              midiOut.send([status, 68, 127]); // set wave to sq with pwm on
+            }
+          }
+
+          console.log(e.name + ": [" + status + ", " + ccNum + ", " + val + "]");
+
+          midiOut.send([status, ccNum, val]);
+      }
+
+      return false;
+    }
+  );
+
+  $("#surprise").button().click(
+      function(event) {
+          var f = document.forms["editor"];
+          for (var param in formToCCs) {
+              var rand = Math.floor((Math.random() * 128));
+              var e = f.elements[param];
+              console.log(param + "=" + rand);                    
+              if (e.length > 1) { // undefined for scalar form inputs
+                for (var j = 0; j < e.length; j++) {
+                  var radioInput = e[j];
+                  //console.log(radioInput);
+                  if (handleRandRadioSet(radioInput, param, rand)) {
+                    break;
+                  }
+                }
+              } else {
+                e.value = rand;
+                $("input[name='" + param + "']").trigger("change");
+              }
+
+          }
+          return false;
+      }
+  );
+});
+
+function handleRandRadioSet(radioInput, param, rand) {
+    var val = 0;
+    // need to handle the 3-way switch here with special case...
+    if (param == "pwmSweep") {
+      if ((rand > 42) && (rand < 84)) {
+        val = 64;
+      } else if (rand > 84) {
+        val = 127;
+      }
+    } else {
+      if (rand > 64) {
+        val = 127;
+      }          
+    }
+    return editor.updateSwitch(radioInput, param, val);
+}
+
+</script>
+  
+<div class="clear" style="padding:1px;">&nbsp;</div>
+</div> <!-- close container -->
+
+</body>
+</html>
